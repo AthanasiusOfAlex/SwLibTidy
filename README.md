@@ -34,3 +34,56 @@ The included XCTests are intended to run SwLibTidy through its API, but **also**
 provide close to 100% API coverage (not code coverage!) of LibTidy. Thus it’s
 likely that this library will eventually be part of the automated integration
 strategy for upstream HTML Tidy.
+
+## Usage
+
+### TidyKit Library
+
+Here's a basic example of how to use `TidyKit` to clean an HTML string:
+
+```swift
+import TidyKit
+
+let html = "<h1>Hello, world!</b>"
+
+Task {
+    do {
+        let result = try await TidyKit.clean(html: html)
+        print(result.tidyHtml)
+        // Prints:
+        // <!DOCTYPE html>
+        // <html>
+        // <head>
+        // <title></title>
+        // </head>
+        // <body>
+        // <h1>Hello, world!</h1>
+        // </body>
+        // </html>
+
+        for message in result.messages {
+            print("\(message.level): \(message.message)")
+        }
+    } catch {
+        print("An error occurred: \(error)")
+    }
+}
+```
+
+### Command-Line Tool
+
+This package also includes a command-line tool named `Console`. You can use it to tidy HTML from standard input.
+
+**Build the tool:**
+
+```bash
+swift build
+```
+
+**Usage:**
+
+```bash
+echo "<h1>Mismatched tag" | .build/debug/Console
+```
+
+This will output the tidied HTML to standard output and any diagnostic messages to standard error.

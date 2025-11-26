@@ -8,12 +8,15 @@
  *   this source code per the W3C Software Notice and License:
  *   https://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
  *
+ *   Modified by AthanasiusOfAlex on 2025/11/26.
+ *
  *   Purpose
  *     This protocol and class define and implement an abstraction to the
  *     CLibTidy `TidyBuffer` that is more useful in Swift.
  */
 
 import Foundation
+import CoreFoundation  // necessary for compilation in Linux
 import CLibTidy
 
 

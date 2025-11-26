@@ -8,6 +8,8 @@
  *   this source code per the W3C Software Notice and License:
  *   https://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
  *
+ *   Modified by AthanasiusOfAlex on 2025/11/26.
+ *
  *   Purpose
  *     Provide test cases for the SwLibTidy, which also effectively tests 100%
  *     of the HTML Tidy public API.
@@ -126,19 +128,62 @@ class SwLibTidyTests: XCTestCase {
      *  release date, its current version, and the platform for which is was
      *  compiled.
      *
-     *  Note that this test is fragile, as it depends on the library date and
-     *  version numbers.
+     *  Note that this test is fragile, as it depends on `version.txt` in the
+     *  C submodule.
      *
      *  - tidyReleaseDate()
      *  - tidyLibraryVersion()
      *  - tidyPlatform()
      */
     func test_tidyReleaseInformation() {
+        
+        // Get the values we need to populate the LIBTIDY_VERSION and RELEASE_DATE macros later.
+        func tidyVersion() -> (String, String)? {
+            let fileURL = URL(fileURLWithPath: #filePath)
+            let versionFileURL = fileURL
+                .deletingLastPathComponent()
+                .deletingLastPathComponent()
+                .deletingLastPathComponent()
+                .appendingPathComponent("Sources")
+                .appendingPathComponent("CLibTidy")
+                .appendingPathComponent("version.txt")
 
-        let expectedDate = "2021."
-        let expectedVers = "5."
+            guard let contents = try? String(contentsOf: versionFileURL, encoding: .utf8) else {
+                return nil
+            }
+            
+            // `version.txt` has format
+            // ```
+            // 5.9.20
+            // 2022.01.25
+            // ```
+            let components = contents.components(separatedBy: "\n")
+            
+            guard components.count>=2 else {
+                return nil
+            }
+            
+            let majorVersion = String(components[0].split(separator: ".")[0] + ".")  // "5."
+            let year = String(components[1].split(separator: ".")[0] + ".")          // "2022."
+            
+            return (year, majorVersion)
+        }
+        
+        guard let (expectedDate, expectedVers) = tidyVersion() else {
+            XCTFail("Could not read version information from version.txt")
+            return
+        }
+        
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
         let expectedPlat = "Apple"
-
+#elseif os(Linux)
+        let expectedPlat = "Linux"
+#elseif os(Windows)
+        let expectedPlat = "Windows"
+#else
+        XCTFail("Unsupported operated system")
+#endif
+        
         JSDAssertHasPrefix( expectedDate, tidyReleaseDate() )
         JSDAssertHasPrefix( expectedVers, tidyLibraryVersion() )
         JSDAssertHasPrefix( expectedPlat, tidyPlatform() )

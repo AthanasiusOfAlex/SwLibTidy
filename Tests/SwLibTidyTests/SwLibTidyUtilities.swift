@@ -8,6 +8,8 @@
  *   this source code per the W3C Software Notice and License:
  *   https://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
  *
+ *   Modified by AthanasiusOfAlex on 2025/11/26.
+ *
  *   Purpose
  *    Provide some basic utilities for the unit tests.
  */
@@ -64,7 +66,7 @@ extension Sequence {
 public func random_words( _ x: Int ) -> [String]? {
 
     guard
-        let wordsString = try? String(contentsOfFile: "/usr/share/dict/words")
+        let wordsString = try? String(contentsOfFile: "/usr/share/dict/words", encoding: .utf8)
     else { return nil }
 
     let words = wordsString.components(separatedBy: .newlines)
@@ -279,7 +281,7 @@ public func printhr( _ value: Any, _ header: String? = nil ) {
  *  A supplemental assert equal function that provides a (semi-) automatic message,
  *  greatly cleaning up all of the strings in the test cases.
  */
-public func JSDAssertEqual<T: Equatable>( _ expect: T, _ result: T, _ message: String = "", file: StaticString = #file, line: UInt = #line) {
+public func JSDAssertEqual<T: Equatable>( _ expect: T, _ result: T, _ message: String = "", file: StaticString = #filePath, line: UInt = #line) {
     let mssg: String
     if message == "" {
         mssg = "Expected \(expect) but got \(result)."
@@ -294,7 +296,7 @@ public func JSDAssertEqual<T: Equatable>( _ expect: T, _ result: T, _ message: S
  *  A supplemental assert equal function that provides a (semi-) automatic message,
  *  greatly cleaning up all of the strings in the test cases.
  */
-public func JSDAssertTrue( _ result: Swift.Bool, _ message: String = "", file: StaticString = #file, line: UInt = #line) {
+public func JSDAssertTrue( _ result: Swift.Bool, _ message: String = "", file: StaticString = #filePath, line: UInt = #line) {
 
     return JSDAssertEqual( true, result, message, file: file, line: line )
 }
@@ -304,7 +306,7 @@ public func JSDAssertTrue( _ result: Swift.Bool, _ message: String = "", file: S
  *  A supplemental assert equal function that provides a (semi-) automatic message,
  *  greatly cleaning up all of the strings in the test cases.
  */
-public func JSDAssertFalse( _ result: Swift.Bool, _ message: String = "", file: StaticString = #file, line: UInt = #line) {
+public func JSDAssertFalse( _ result: Swift.Bool, _ message: String = "", file: StaticString = #filePath, line: UInt = #line) {
 
     return JSDAssertEqual( false, result, message, file: file, line: line )
 }
@@ -315,7 +317,7 @@ public func JSDAssertFalse( _ result: Swift.Bool, _ message: String = "", file: 
  *  prefix, and provides a (semi-) automatic message, greatly cleaning up all of
  *  the strings in the test cases.
  */
-public func JSDAssertHasPrefix( _ expect: String?, _ result: String?, _ message: String = "", file: StaticString = #file, line: UInt = #line) {
+public func JSDAssertHasPrefix( _ expect: String?, _ result: String?, _ message: String = "", file: StaticString = #filePath, line: UInt = #line) {
 
     let mssg: String
     if message == "" {
@@ -337,7 +339,7 @@ public func JSDAssertHasPrefix( _ expect: String?, _ result: String?, _ message:
  *  suffix, and provides a (semi-) automatic message, greatly cleaning up all of
  *  the strings in the test cases.
  */
-public func JSDAssertHasSuffix( _ expect: String?, _ result: String?, _ message: String = "", file: StaticString = #file, line: UInt = #line) {
+public func JSDAssertHasSuffix( _ expect: String?, _ result: String?, _ message: String = "", file: StaticString = #filePath, line: UInt = #line) {
 
     let mssg: String
     if message == "" {
